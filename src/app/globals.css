@@ -27,3 +27,20 @@ body {
 .text-glow {
   text-shadow: 0 0 32px rgba(220, 38, 38, 0.55);
 }
+
+/* ===== ธีมลูกค้า: minimal ครีม/ชมพู blush ===== */
+.bg-cream {
+  background:
+    radial-gradient(55% 35% at 50% 0%, rgba(244, 175, 189, 0.22), transparent 70%),
+    #faf7f2;
+}
+.bg-cream-called {
+  background:
+    radial-gradient(70% 55% at 50% 35%, rgba(244, 114, 142, 0.28), transparent 75%),
+    #faf7f2;
+}
+.card-cream {
+  background: #ffffff;
+  border: 1px solid #efe9e1;
+  box-shadow: 0 8px 28px -14px rgba(120, 90, 90, 0.18);
+}
