@@ -90,6 +90,7 @@ export default function AppHubPage() {
 
   const menus = [
     { href: "/staff", title: "คอนโซลพนักงาน", sub: "ตรวจสลิป · เรียกคิว · จัดการคิว", accent: true },
+    { href: "/dashboard", title: "แดชบอร์ด", sub: "ยอดขาย · สถิติคิว · Export CSV", accent: false },
     { href: "/qr", title: "จอ QR ลูกค้า", sub: "QR สแกนจอง + คิวปัจจุบัน (ตั้งหน้าบูธ)", accent: false },
     { href: "/tv", title: "จอแสดงคิว TV", sub: "กำลังถ่าย + คิวถัดไป (จอใหญ่)", accent: false },
     { href: "/", title: "หน้าจองของลูกค้า", sub: "เปิดดู / ทดสอบการจอง", accent: false },
