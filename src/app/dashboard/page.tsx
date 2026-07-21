@@ -49,8 +49,8 @@ interface Stats {
 
 const STATUS_META: Record<string, { label: string; cls: string }> = {
   done: { label: "เสร็จแล้ว", cls: "bg-green-50 text-green-600" },
-  shooting: { label: "กำลังถ่าย", cls: "bg-blue-50 text-blue-600" },
-  called: { label: "เรียกแล้ว", cls: "bg-blue-50 text-blue-600" },
+  shooting: { label: "กำลังถ่าย", cls: "bg-red-50 text-red-600" },
+  called: { label: "เรียกแล้ว", cls: "bg-red-50 text-red-600" },
   waiting: { label: "รอคิว", cls: "bg-slate-100 text-slate-600" },
   pending_verify: { label: "รอตรวจสลิป", cls: "bg-amber-50 text-amber-600" },
   pending_payment: { label: "รอชำระ", cls: "bg-amber-50 text-amber-600" },
@@ -87,10 +87,10 @@ export default function DashboardPage() {
 
   if (authed === false) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-slate-50 font-[Inter,Kanit,sans-serif]">
+      <main className="flex min-h-screen items-center justify-center bg-page font-[Inter,Kanit,sans-serif]">
         <div className="flex flex-col items-center gap-3 rounded-2xl bg-white p-8 shadow-sm">
           <p className="text-slate-500">ยังไม่ได้เข้าสู่ระบบ</p>
-          <Link href="/app" className="rounded-xl bg-blue-600 px-5 py-2.5 font-semibold text-white">
+          <Link href="/app" className="rounded-xl bg-red-600 px-5 py-2.5 font-semibold text-white">
             ไปหน้าเข้าสู่ระบบ
           </Link>
         </div>
@@ -104,8 +104,8 @@ export default function DashboardPage() {
   const noShowRate = t && t.done + t.noShow > 0 ? Math.round((t.noShow / (t.done + t.noShow)) * 100) : 0;
 
   return (
-    <main className="min-h-screen bg-slate-50 pb-12 font-[Inter,Kanit,sans-serif] text-slate-800">
-      <header className="sticky top-0 z-10 border-b border-slate-200/70 bg-white/80 backdrop-blur-lg">
+    <main className="min-h-screen bg-page pb-12 font-[Inter,Kanit,sans-serif] text-slate-800">
+      <header className="sticky top-0 z-10 border-b glass-bar border-transparent">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-3.5">
           <div className="flex items-center gap-3">
             <Link href="/app" className="rounded-xl p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600">
@@ -128,7 +128,7 @@ export default function DashboardPage() {
             </label>
             <a
               href={`/api/staff/export?date=${date}`}
-              className="flex items-center gap-1.5 rounded-xl bg-blue-600 px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700"
+              className="flex items-center gap-1.5 rounded-xl bg-neutral-900 px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-neutral-700"
             >
               <Download size={15} /> CSV
             </a>
@@ -146,7 +146,7 @@ export default function DashboardPage() {
         ) : (
           <>
             <section className="grid grid-cols-2 gap-3 md:grid-cols-4">
-              <Kpi icon={<TrendingUp size={17} />} tint="bg-blue-50 text-blue-600" label="รายได้วันนี้" value={`${t!.revenue.toLocaleString()}`} unit="บาท" />
+              <Kpi icon={<TrendingUp size={17} />} tint="bg-red-50 text-red-600" label="รายได้วันนี้" value={`${t!.revenue.toLocaleString()}`} unit="บาท" />
               <Kpi icon={<CheckCircle2 size={17} />} tint="bg-green-50 text-green-600" label="คิวเสร็จแล้ว" value={String(t!.done)} unit={`จาก ${t!.total} คิว`} />
               <Kpi icon={<Users size={17} />} tint="bg-violet-50 text-violet-600" label="ลูกค้า (คิวที่เสร็จ)" value={String(t!.guests)} unit={`คน · ${t!.photos} รูป`} />
               <Kpi icon={<Clock size={17} />} tint="bg-amber-50 text-amber-600" label="เฉลี่ยต่อคิว" value={t!.avgSessionMin != null ? String(t!.avgSessionMin) : "—"} unit="นาที" />
@@ -164,11 +164,11 @@ export default function DashboardPage() {
                       if (h < 8 && n === 0) return null;
                       return (
                         <div key={h} className="group flex flex-1 flex-col items-center gap-1">
-                          <span className="text-[10px] font-semibold text-blue-600 opacity-0 transition-opacity group-hover:opacity-100">
+                          <span className="text-[10px] font-semibold text-red-600 opacity-0 transition-opacity group-hover:opacity-100">
                             {n || ""}
                           </span>
                           <div
-                            className={`w-full rounded-md transition-colors ${n > 0 ? "bg-blue-500 group-hover:bg-blue-600" : "bg-slate-100"}`}
+                            className={`w-full rounded-md transition-colors ${n > 0 ? "bg-red-500 group-hover:bg-red-600" : "bg-slate-100"}`}
                             style={{ height: `${Math.max(4, (n / maxHour) * 100)}%` }}
                           />
                           <span className="text-[10px] text-slate-400">{h}</span>
@@ -183,12 +183,12 @@ export default function DashboardPage() {
                 <div className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm">
                   <h2 className="text-sm font-semibold text-slate-500">ช่องทางรับเงิน</h2>
                   <div className="mt-3 flex h-2.5 overflow-hidden rounded-full bg-slate-100">
-                    <div className="bg-blue-500" style={{ width: `${(t!.revenuePromptpay / revTotal) * 100}%` }} />
+                    <div className="bg-red-500" style={{ width: `${(t!.revenuePromptpay / revTotal) * 100}%` }} />
                     <div className="bg-green-500" style={{ width: `${(t!.revenueCash / revTotal) * 100}%` }} />
                   </div>
                   <div className="mt-3 space-y-1.5 text-sm">
                     <div className="flex items-center justify-between">
-                      <span className="flex items-center gap-1.5 text-slate-500"><QrCode size={14} className="text-blue-500" /> PromptPay</span>
+                      <span className="flex items-center gap-1.5 text-slate-500"><QrCode size={14} className="text-red-500" /> PromptPay</span>
                       <b>{t!.revenuePromptpay.toLocaleString()}.-</b>
                     </div>
                     <div className="flex items-center justify-between">
@@ -210,7 +210,7 @@ export default function DashboardPage() {
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-slate-500">กำลังรอ/ถ่ายอยู่</span>
-                      <b className="text-blue-600">{t!.active} คิว</b>
+                      <b className="text-red-600">{t!.active} คิว</b>
                     </div>
                   </div>
                 </div>

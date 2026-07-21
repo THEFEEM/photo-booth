@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import Link from "next/link";
 import { Logo } from "@/components/logo";
 import { useQueueUpdates } from "@/lib/use-queue-updates";
 import type { StaffBooking, StaffQueueResponse } from "@/lib/types";
@@ -18,8 +19,6 @@ const STATUS_TH: Record<string, string> = {
 
 export default function StaffPage() {
   const [authed, setAuthed] = useState<boolean | null>(null);
-  const [pin, setPin] = useState("");
-  const [loginError, setLoginError] = useState<string | null>(null);
   const [data, setData] = useState<StaffQueueResponse | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
@@ -37,22 +36,6 @@ export default function StaffPage() {
   }, []);
 
   useQueueUpdates(load, 5000);
-
-  async function login(e: React.FormEvent) {
-    e.preventDefault();
-    setLoginError(null);
-    const res = await fetch("/api/staff/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ pin }),
-    });
-    if (!res.ok) {
-      setLoginError("PIN ไม่ถูกต้อง");
-      return;
-    }
-    setPin("");
-    await load();
-  }
 
   async function act(id: string, action: string) {
     setBusyId(id);
@@ -75,56 +58,51 @@ export default function StaffPage() {
 
   if (authed === false) {
     return (
-      <main className="bg-ahlan flex min-h-screen items-center justify-center px-5">
-        <form onSubmit={login} className="flex w-full max-w-xs flex-col items-center gap-5">
-          <Logo imgClass="h-14 w-auto" textClass="text-xl" />
-          <p className="text-sm font-light tracking-[0.3em] text-zinc-500">STAFF CONSOLE</p>
-          <input
-            type="password"
-            inputMode="numeric"
-            value={pin}
-            onChange={(e) => setPin(e.target.value)}
-            placeholder="PIN"
-            className="w-full rounded-2xl border border-zinc-800 bg-zinc-900 px-4 py-3.5 text-center text-2xl tracking-[0.5em] outline-none transition-colors placeholder:tracking-normal placeholder:text-zinc-600 focus:border-red-600"
-          />
-          {loginError && <p className="text-sm text-red-400">{loginError}</p>}
-          <button className="w-full rounded-2xl bg-red-600 py-3.5 font-semibold text-white transition-colors active:bg-red-700">
-            เข้าสู่ระบบ
-          </button>
-        </form>
+      <main className="bg-page flex min-h-screen items-center justify-center px-5">
+        <div className="glass-strong flex flex-col items-center gap-4 rounded-3xl p-8">
+          <p className="font-light text-neutral-500">ยังไม่ได้เข้าสู่ระบบ</p>
+          <Link href="/app" className="press rounded-2xl bg-red-600 px-6 py-3 font-semibold text-white glow-red-soft">
+            ไปหน้าเข้าสู่ระบบ
+          </Link>
+        </div>
       </main>
     );
   }
 
   if (!data) {
     return (
-      <main className="bg-ahlan flex min-h-screen items-center justify-center">
-        <p className="animate-pulse font-light text-zinc-600">กำลังโหลด...</p>
+      <main className="bg-page flex min-h-screen items-center justify-center">
+        <p className="animate-pulse font-light text-neutral-400">กำลังโหลด...</p>
       </main>
     );
   }
 
   return (
-    <main className="bg-ahlan min-h-screen">
-      <div className="mx-auto max-w-2xl px-4 pb-10 pt-6 lg:max-w-5xl">
-        <header className="mb-5 flex items-center justify-between">
+    <main className="bg-page min-h-screen">
+      <header className="glass-bar sticky top-0 z-10">
+        <div className="mx-auto flex max-w-2xl items-center justify-between px-4 py-3 lg:max-w-5xl">
           <div className="flex items-center gap-3">
-            <Logo imgClass="h-10 w-auto" textClass="text-base" />
-            <span className="text-xs font-light tracking-[0.3em] text-zinc-500">STAFF</span>
+            <Link href="/app"><Logo imgClass="h-10 w-auto rounded-xl" textClass="text-base" /></Link>
+            <span className="text-xs font-medium uppercase tracking-[0.3em] text-neutral-400">Staff</span>
           </div>
-          <div className="text-right text-sm font-light text-zinc-400">
-            <div>รอ <b className="font-semibold text-zinc-100">{data.stats.waiting}</b> · เสร็จ <b className="font-semibold text-zinc-100">{data.stats.doneToday}</b></div>
-            <div>ยอดรับ <b className="font-semibold text-red-400">{data.stats.revenuePaidThb.toLocaleString()} บาท</b></div>
+          <div className="text-right text-sm font-light text-neutral-500">
+            <div>รอ <b className="font-semibold text-neutral-900">{data.stats.waiting}</b> · เสร็จ <b className="font-semibold text-neutral-900">{data.stats.doneToday}</b></div>
+            <div>ยอดรับ <b className="font-semibold text-red-600">{data.stats.revenuePaidThb.toLocaleString()} บาท</b></div>
           </div>
-        </header>
+        </div>
+      </header>
 
+      <div className="mx-auto max-w-2xl px-4 pb-12 pt-5 lg:max-w-5xl">
         {actionError && (
-          <p className="mb-3 rounded-xl border border-red-900 bg-red-950/60 px-3 py-2.5 text-sm text-red-300">{actionError}</p>
+          <p className="mb-3 rounded-2xl bg-red-50 px-4 py-3 text-sm font-medium text-red-600">{actionError}</p>
         )}
 
         <section className="grid items-start gap-3 lg:grid-cols-2">
           {data.active.length === 0 && (
-            <p className="py-10 text-center font-light text-zinc-600">ยังไม่มีคิววันนี้</p>
+            <div className="glass col-span-full flex flex-col items-center gap-2 rounded-3xl py-12 text-center">
+              <p className="font-medium text-neutral-500">ยังไม่มีคิววันนี้</p>
+              <p className="text-sm font-light text-neutral-400">เมื่อลูกค้าจองเข้ามา การ์ดคิวจะขึ้นที่นี่อัตโนมัติ</p>
+            </div>
           )}
           {data.active.map((b) => (
             <BookingCard key={b.id} b={b} busy={busyId === b.id} onAction={act} />
@@ -133,11 +111,11 @@ export default function StaffPage() {
 
         {data.recent.length > 0 && (
           <section className="mt-8">
-            <h2 className="mb-2 text-xs font-semibold tracking-[0.3em] text-zinc-600">ล่าสุด</h2>
-            <div className="flex flex-col gap-1">
+            <h2 className="mb-2 px-1 text-xs font-semibold uppercase tracking-[0.3em] text-neutral-400">ล่าสุด</h2>
+            <div className="glass divide-y divide-neutral-100 overflow-hidden rounded-3xl">
               {data.recent.map((b) => (
-                <div key={b.id} className="flex justify-between rounded-xl bg-zinc-900/50 px-3 py-2 text-sm font-light text-zinc-500">
-                  <span>{b.queueLabel ?? "—"} · {b.name}</span>
+                <div key={b.id} className="flex justify-between px-5 py-3 text-sm font-light text-neutral-500">
+                  <span><b className="font-semibold text-neutral-700">{b.queueLabel ?? "—"}</b> · {b.name}</span>
                   <span>{STATUS_TH[b.status]}</span>
                 </div>
               ))}
@@ -159,34 +137,32 @@ function BookingCard({
   onAction: (id: string, action: string) => void;
 }) {
   const badge =
-    b.status === "shooting"
-      ? "border-zinc-600 bg-zinc-800 text-zinc-200"
-      : b.status === "called"
-        ? "border-red-700 bg-red-950/60 text-red-300"
-        : b.status === "pending_verify"
-          ? "border-red-800 bg-red-950/40 text-red-400"
-          : b.status === "no_show"
-            ? "border-red-900 bg-zinc-900 text-red-500"
-            : "border-zinc-700 bg-zinc-800/80 text-zinc-400";
+    b.status === "shooting" || b.status === "called"
+      ? "bg-red-600 text-white"
+      : b.status === "pending_verify"
+        ? "bg-red-50 text-red-600"
+        : b.status === "no_show"
+          ? "bg-neutral-900 text-white"
+          : "bg-neutral-100 text-neutral-500";
 
   return (
-    <div className={`rounded-2xl border border-zinc-800 bg-zinc-900/80 p-4 ${busy ? "opacity-60" : ""}`}>
+    <div className={`glass-strong rounded-3xl p-5 transition-opacity ${busy ? "opacity-60" : ""}`}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <span className="text-3xl font-extrabold tracking-wider">{b.queueLabel ?? "—"}</span>
+          <span className="text-3xl font-extrabold tracking-wide text-neutral-900">{b.queueLabel ?? "—"}</span>
           <div className="text-sm">
-            <div className="font-medium">{b.name}</div>
-            <div className="font-light text-zinc-400">
-              {b.partySize} คน · {b.photoCount} รูป · {b.amountThb} บาท
-              {b.callCount > 1 && <span className="text-amber-400"> · เรียกแล้ว {b.callCount} ครั้ง</span>}
+            <div className="font-semibold text-neutral-900">{b.name}</div>
+            <div className="font-light text-neutral-400">
+              {b.partySize} คน · {b.photoCount} รูป · {b.amountThb.toLocaleString()} บาท
+              {b.callCount > 1 && <span className="font-medium text-amber-600"> · เรียกแล้ว {b.callCount} ครั้ง</span>}
             </div>
           </div>
         </div>
         <div className="flex flex-col items-end gap-1">
-          <span className={`rounded-full border px-2.5 py-0.5 text-xs font-semibold ${badge}`}>{STATUS_TH[b.status]}</span>
+          <span className={`rounded-full px-3 py-1 text-xs font-semibold ${badge}`}>{STATUS_TH[b.status]}</span>
           <span
-            className={`rounded-full px-2.5 py-0.5 text-xs ${
-              b.paymentStatus === "paid" ? "bg-emerald-950 text-emerald-400" : "bg-amber-950 text-amber-400"
+            className={`rounded-full px-3 py-1 text-xs font-medium ${
+              b.paymentStatus === "paid" ? "bg-green-50 text-green-600" : "bg-amber-50 text-amber-600"
             }`}
           >
             {b.paymentStatus === "paid" ? "จ่ายแล้ว" : b.paymentMethod === "cash" ? "เงินสด-ยังไม่จ่าย" : "ยังไม่จ่าย"}
@@ -199,20 +175,20 @@ function BookingCard({
           href={b.slipUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-3 block overflow-hidden rounded-xl border border-zinc-700"
+          className="mt-3 block overflow-hidden rounded-2xl border border-neutral-100"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={b.slipUrl} alt="สลิป" className="max-h-72 w-full bg-zinc-950 object-contain" />
-          <span className="block bg-zinc-800 py-1.5 text-center text-xs font-light text-zinc-300">
-            แตะเพื่อดูรูปเต็ม — เช็คยอด {b.amountThb} บาท + เวลาโอน
+          <img src={b.slipUrl} alt="สลิป" className="max-h-72 w-full bg-neutral-50 object-contain" />
+          <span className="block bg-neutral-900 py-2 text-center text-xs font-medium text-white">
+            แตะเพื่อดูรูปเต็ม — เช็คยอด {b.amountThb.toLocaleString()} บาท + เวลาโอน
           </span>
         </a>
       )}
 
-      <div className="mt-3 flex flex-wrap gap-2">
+      <div className="mt-4 flex flex-wrap gap-2">
         {b.status === "pending_verify" && (
           <>
-            <Btn kind="primary" onClick={() => onAction(b.id, "approve_slip")}>สลิปถูกต้อง ออกคิว</Btn>
+            <Btn kind="primary" onClick={() => onAction(b.id, "approve_slip")}>✓ สลิปถูกต้อง ออกคิว</Btn>
             <Btn kind="danger" onClick={() => onAction(b.id, "reject_slip")}>สลิปไม่ผ่าน</Btn>
           </>
         )}
@@ -224,10 +200,10 @@ function BookingCard({
             <Btn kind="danger" onClick={() => onAction(b.id, "no_show")}>ไม่มา</Btn>
           </>
         )}
-        {b.status === "shooting" && <Btn kind="primary" onClick={() => onAction(b.id, "done")}>✔️ เสร็จแล้ว</Btn>}
-        {b.status === "no_show" && <Btn kind="primary" onClick={() => onAction(b.id, "requeue")}>กลับเข้าคิว</Btn>}
+        {b.status === "shooting" && <Btn kind="black" onClick={() => onAction(b.id, "done")}>✓ เสร็จแล้ว</Btn>}
+        {b.status === "no_show" && <Btn kind="primary" onClick={() => onAction(b.id, "requeue")}>↩ กลับเข้าคิว</Btn>}
         {b.paymentMethod === "cash" && b.paymentStatus === "unpaid" && b.status !== "cancelled" && (
-          <Btn kind="amber" onClick={() => onAction(b.id, "confirm_cash")}>💵 รับเงินแล้ว</Btn>
+          <Btn kind="black" onClick={() => onAction(b.id, "confirm_cash")}>💵 รับเงินแล้ว</Btn>
         )}
         {["pending_payment", "pending_verify", "waiting", "called"].includes(b.status) && (
           <Btn kind="ghost" onClick={() => onAction(b.id, "cancel")}>ยกเลิก</Btn>
@@ -242,21 +218,18 @@ function Btn({
   onClick,
   children,
 }: {
-  kind: "primary" | "danger" | "amber" | "ghost";
+  kind: "primary" | "black" | "danger" | "ghost";
   onClick: () => void;
   children: React.ReactNode;
 }) {
   const styles: Record<string, string> = {
-    primary: "bg-red-600 text-white active:bg-red-700",
-    danger: "border border-red-900 bg-transparent text-red-400 active:bg-red-950",
-    amber: "bg-amber-600 text-white active:bg-amber-700",
-    ghost: "border border-zinc-700 bg-transparent text-zinc-300 active:bg-zinc-800",
+    primary: "bg-red-600 text-white glow-red-soft",
+    black: "bg-neutral-900 text-white",
+    danger: "border border-red-200 bg-white text-red-600",
+    ghost: "border border-neutral-200 bg-white text-neutral-500",
   };
   return (
-    <button
-      onClick={onClick}
-      className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors ${styles[kind]}`}
-    >
+    <button onClick={onClick} className={`press rounded-2xl px-5 py-3 text-sm font-semibold ${styles[kind]}`}>
       {children}
     </button>
   );

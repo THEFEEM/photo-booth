@@ -17,17 +17,17 @@ export default function TvPage() {
   useQueueUpdates(load, 3000);
 
   return (
-    <main className="bg-cream min-h-screen w-full text-stone-800">
+    <main className="bg-page min-h-screen w-full text-neutral-800">
       <div className="mx-auto flex min-h-screen w-full max-w-md flex-col px-5 py-6 md:max-w-3xl lg:max-w-none lg:px-[4vw] lg:py-[3vh]">
         <header className="flex items-center justify-between">
           <div className="flex items-center gap-3 lg:gap-[1.5vw]">
-            <Logo imgClass="h-10 w-auto rounded-xl md:h-14 lg:h-[7vh]" textClass="text-xl text-stone-900" />
-            <span className="hidden text-sm font-light uppercase tracking-[0.5em] text-stone-400 sm:block lg:text-[1.6vw]">
+            <Logo imgClass="h-10 w-auto rounded-xl md:h-14 lg:h-[7vh]" textClass="text-xl text-neutral-900" />
+            <span className="hidden text-sm font-light uppercase tracking-[0.5em] text-neutral-400 sm:block lg:text-[1.6vw]">
               Photo Booth
             </span>
           </div>
-          <span className="text-sm font-light text-stone-500 md:text-lg lg:text-[1.8vw]">
-            รออีก <b className="font-semibold text-stone-800">{q?.waitingCount ?? 0}</b> คิว
+          <span className="text-sm font-light text-neutral-500 md:text-lg lg:text-[1.8vw]">
+            รออีก <b className="font-semibold text-neutral-800">{q?.waitingCount ?? 0}</b> คิว
           </span>
         </header>
 
@@ -35,8 +35,8 @@ export default function TvPage() {
           <div
             className={`flex min-h-[38vh] flex-col items-center justify-center rounded-3xl lg:col-span-2 lg:min-h-0 lg:rounded-[2.5vw] ${
               q?.called
-                ? "animate-pulse bg-rose-400 text-white shadow-[0_24px_60px_-16px_rgba(244,114,142,0.8)]"
-                : "card-cream"
+                ? "animate-pulse bg-red-600 text-white glow-red-soft"
+                : "glass-strong"
             }`}
           >
             {q?.called ? (
@@ -48,39 +48,39 @@ export default function TvPage() {
               </>
             ) : q?.shooting ? (
               <>
-                <div className="text-base font-light tracking-[0.4em] text-stone-400 lg:text-[2.2vw]">กำลังถ่าย</div>
+                <div className="text-base font-light tracking-[0.4em] text-neutral-400 lg:text-[2.2vw]">กำลังถ่าย</div>
                 <div
-                  className="font-extrabold leading-none tracking-[0.06em] text-stone-900"
+                  className="font-extrabold leading-none tracking-[0.06em] text-neutral-900"
                   style={{ fontSize: "clamp(5rem, 18vw, 17rem)" }}
                 >
                   {q.shooting}
                 </div>
               </>
             ) : (
-              <div className="text-xl font-light tracking-[0.4em] text-stone-300 lg:text-[2.5vw]">พร้อมให้บริการ</div>
+              <div className="text-xl font-light tracking-[0.4em] text-neutral-300 lg:text-[2.5vw]">พร้อมให้บริการ</div>
             )}
             {q?.called && q?.shooting && (
-              <div className={`mt-3 text-sm font-light lg:text-[1.7vw] ${q.called ? "text-white/80" : "text-stone-400"}`}>
+              <div className={`mt-3 text-sm font-light lg:text-[1.7vw] ${q.called ? "text-white/80" : "text-neutral-400"}`}>
                 กำลังถ่าย <b className="font-semibold">{q.shooting}</b>
               </div>
             )}
           </div>
 
-          <div className="card-cream flex flex-col rounded-3xl p-5 lg:rounded-[2.5vw] lg:p-[1.8vw]">
-            <h2 className="text-sm font-semibold tracking-[0.3em] text-stone-500 lg:text-[1.7vw]">คิวถัดไป</h2>
+          <div className="glass-strong flex flex-col rounded-3xl p-5 lg:rounded-[2.5vw] lg:p-[1.8vw]">
+            <h2 className="text-sm font-semibold tracking-[0.3em] text-neutral-500 lg:text-[1.7vw]">คิวถัดไป</h2>
             <div className="mt-3 grid grid-cols-2 gap-2 lg:mt-[1.5vh] lg:flex lg:flex-1 lg:flex-col lg:gap-[1.2vh]">
               {(q?.upNext ?? []).map((label, i) => (
                 <div
                   key={label}
                   className={`rounded-2xl px-4 py-3 text-center text-3xl font-extrabold tracking-[0.08em] md:text-4xl lg:rounded-[1vw] lg:text-[4vw] ${
-                    i === 0 ? "bg-rose-50 text-rose-400" : "bg-stone-100 text-stone-400"
+                    i === 0 ? "bg-red-50 text-red-600" : "bg-neutral-100 text-neutral-400"
                   }`}
                 >
                   {label}
                 </div>
               ))}
               {(!q || q.upNext.length === 0) && (
-                <div className="col-span-2 py-6 text-center text-sm font-light text-stone-300 lg:text-[1.6vw]">
+                <div className="col-span-2 py-6 text-center text-sm font-light text-neutral-300 lg:text-[1.6vw]">
                   ยังไม่มีคิว
                 </div>
               )}
@@ -88,8 +88,8 @@ export default function TvPage() {
           </div>
         </section>
 
-        <footer className="mt-5 text-center text-xs font-light tracking-[0.3em] text-stone-400 md:text-sm lg:mt-[2vh] lg:text-[1.4vw]">
-          สแกน QR เพื่อจองคิว · 1 รูป 15 บาท <span className="text-rose-300">·</span> AHLAN GROUP
+        <footer className="mt-5 text-center text-xs font-light tracking-[0.3em] text-neutral-400 md:text-sm lg:mt-[2vh] lg:text-[1.4vw]">
+          สแกน QR เพื่อจองคิว · 1 รูป 15 บาท <span className="text-red-300">·</span> AHLAN GROUP
         </footer>
       </div>
     </main>
