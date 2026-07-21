@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: "Kanit", system-ui, -apple-system, sans-serif;
+}
+
+/* พื้นหลังหลัก: ดำไล่เฟดแดงจางจากด้านบน */
+.bg-ahlan {
+  background:
+    radial-gradient(60% 40% at 50% 0%, rgba(220, 38, 38, 0.14), transparent 70%),
+    linear-gradient(180deg, #0e0a0b 0%, #09090b 55%);
+}
+
+/* ตอนถูกเรียกคิว: แดงเข้มกลางจอ */
+.bg-ahlan-called {
+  background:
+    radial-gradient(70% 55% at 50% 35%, rgba(220, 38, 38, 0.32), transparent 75%),
+    #09090b;
+}
+
+.glow-red {
+  box-shadow: 0 0 44px -6px rgba(220, 38, 38, 0.55);
+}
+
+.text-glow {
+  text-shadow: 0 0 32px rgba(220, 38, 38, 0.55);
+}
