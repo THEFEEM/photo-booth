@@ -40,7 +40,7 @@ export default function BookingPage() {
     }
   }
 
-  const selCard = "press rounded-2xl border text-center transition-all duration-200";
+  const selCard = "press rounded-2xl border text-center text-neutral-800 transition-all duration-200";
   const on = "border-red-500 bg-red-50/80 glow-red-soft";
   const off = "border-neutral-200 bg-white/80";
 
