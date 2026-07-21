@@ -11,7 +11,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ token: 
   const { token } = await params;
   const { rows } = await pool.query(
     `select id, booking_date, queue_no, queue_label, name, party_size, photo_count,
-            amount_thb, payment_method, payment_status, status, slip_rejected_at
+            amount_thb, payment_method, payment_status, status, slip_rejected_at, call_count
      from bookings where token = $1`,
     [token]
   );
@@ -49,6 +49,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ token: 
     etaMinutes,
     promptpayQr,
     slipRejected: b.slip_rejected_at != null,
+    callCount: b.call_count,
   };
   return NextResponse.json(res);
 }

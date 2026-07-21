@@ -45,14 +45,20 @@ export async function avgSessionMinutes(): Promise<number> {
 }
 
 export async function getPublicQueue(): Promise<QueueState> {
-  const { rows } = await pool.query<{ queue_label: string; status: string }>(
-    `select queue_label, status from bookings
+  const { rows } = await pool.query<{ queue_label: string; status: string; call_count: number }>(
+    `select queue_label, status, call_count from bookings
      where booking_date = (now() at time zone 'Asia/Bangkok')::date
        and status in ('waiting','called','shooting') and queue_no is not null
      order by queue_no asc`
   );
   const shooting = rows.find((r) => r.status === "shooting")?.queue_label ?? null;
-  const called = rows.find((r) => r.status === "called")?.queue_label ?? null;
+  const calledRow = rows.find((r) => r.status === "called");
   const waiting = rows.filter((r) => r.status === "waiting").map((r) => r.queue_label);
-  return { shooting, called, upNext: waiting.slice(0, 5), waitingCount: waiting.length };
+  return {
+    shooting,
+    called: calledRow?.queue_label ?? null,
+    callSeq: calledRow?.call_count ?? 0,
+    upNext: waiting.slice(0, 5),
+    waitingCount: waiting.length,
+  };
 }

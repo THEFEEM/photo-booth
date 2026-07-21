@@ -1,8 +1,10 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import Link from "next/link";
 import { Logo } from "@/components/logo";
+import { SoundToggle } from "@/components/sound-toggle";
+import { playNewBooking, playNewSlip } from "@/lib/sound";
 import { useQueueUpdates } from "@/lib/use-queue-updates";
 import type { StaffBooking, StaffQueueResponse } from "@/lib/types";
 
@@ -23,16 +25,28 @@ export default function StaffPage() {
   const [actionError, setActionError] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
 
+  const prevIdsRef = useRef<{ all: Set<string>; verify: Set<string> } | null>(null);
+
   const load = useCallback(async () => {
     const res = await fetch("/api/staff/queue", { cache: "no-store" });
     if (res.status === 401) {
       setAuthed(false);
       return;
     }
-    if (res.ok) {
-      setAuthed(true);
-      setData(await res.json());
+    if (!res.ok) return;
+    const d: StaffQueueResponse = await res.json();
+    const all = new Set(d.active.map((b) => b.id));
+    const verify = new Set(d.active.filter((b) => b.status === "pending_verify").map((b) => b.id));
+    const prev = prevIdsRef.current;
+    if (prev) {
+      const hasNewSlip = [...verify].some((id) => !prev.verify.has(id));
+      const hasNewBooking = [...all].some((id) => !prev.all.has(id));
+      if (hasNewSlip) playNewSlip();
+      else if (hasNewBooking) playNewBooking();
     }
+    prevIdsRef.current = { all, verify };
+    setAuthed(true);
+    setData(d);
   }, []);
 
   useQueueUpdates(load, 5000);
@@ -84,6 +98,7 @@ export default function StaffPage() {
           <div className="flex items-center gap-3">
             <Link href="/app"><Logo imgClass="h-10 w-auto rounded-xl" textClass="text-base" /></Link>
             <span className="text-xs font-medium uppercase tracking-[0.3em] text-neutral-400">Staff</span>
+            <SoundToggle className="!px-3 !py-1.5 !text-xs" />
           </div>
           <div className="text-right text-sm font-light text-neutral-500">
             <div>รอ <b className="font-semibold text-neutral-900">{data.stats.waiting}</b> · เสร็จ <b className="font-semibold text-neutral-900">{data.stats.doneToday}</b></div>

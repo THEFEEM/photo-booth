@@ -1,7 +1,9 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { Logo } from "@/components/logo";
+import { SoundToggle } from "@/components/sound-toggle";
+import { announceQueue } from "@/lib/sound";
 import { useQueueUpdates } from "@/lib/use-queue-updates";
 import type { QueueState } from "@/lib/types";
 
@@ -9,9 +11,18 @@ import type { QueueState } from "@/lib/types";
 export default function TvPage() {
   const [q, setQ] = useState<QueueState | null>(null);
 
+  const prevCallRef = useRef<{ label: string | null; seq: number }>({ label: null, seq: 0 });
+
   const load = useCallback(async () => {
     const res = await fetch("/api/queue", { cache: "no-store" });
-    if (res.ok) setQ(await res.json());
+    if (!res.ok) return;
+    const data: QueueState = await res.json();
+    const prev = prevCallRef.current;
+    if (data.called && (data.called !== prev.label || data.callSeq > prev.seq)) {
+      announceQueue(data.called);
+    }
+    prevCallRef.current = { label: data.called, seq: data.called ? data.callSeq : 0 };
+    setQ(data);
   }, []);
 
   useQueueUpdates(load, 3000);
@@ -26,9 +37,12 @@ export default function TvPage() {
               Photo Booth
             </span>
           </div>
-          <span className="text-sm font-light text-neutral-500 md:text-lg lg:text-[1.8vw]">
-            รออีก <b className="font-semibold text-neutral-800">{q?.waitingCount ?? 0}</b> คิว
-          </span>
+          <div className="flex items-center gap-3">
+            <SoundToggle />
+            <span className="text-sm font-light text-neutral-500 md:text-lg lg:text-[1.8vw]">
+              รออีก <b className="font-semibold text-neutral-800">{q?.waitingCount ?? 0}</b> คิว
+            </span>
+          </div>
         </header>
 
         <section className="mt-5 grid flex-1 gap-4 lg:mt-[2.5vh] lg:grid-cols-3 lg:gap-[2vw]">

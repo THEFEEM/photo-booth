@@ -23,11 +23,13 @@ export interface BookingStatusResponse {
   etaMinutes: number | null;
   promptpayQr: string | null;
   slipRejected: boolean;
+  callCount: number;
 }
 
 export interface QueueState {
   shooting: string | null;
   called: string | null;
+  callSeq: number;
   upNext: string[];
   waitingCount: number;
 }

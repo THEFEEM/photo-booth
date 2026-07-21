@@ -3,7 +3,9 @@
 import { useCallback, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { Logo } from "@/components/logo";
+import { SoundToggle } from "@/components/sound-toggle";
 import { Steps } from "@/components/steps";
+import { playCalled, playNear, playSuccess } from "@/lib/sound";
 import { useQueueUpdates } from "@/lib/use-queue-updates";
 import type { BookingStatusResponse } from "@/lib/types";
 
@@ -31,13 +33,33 @@ export default function BookingStatusPage() {
   const [slipError, setSlipError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
+  const prevRef = useRef<{ status: string; callCount: number; position: number | null } | null>(null);
+
   const load = useCallback(async () => {
     const res = await fetch(`/api/bookings/${token}`, { cache: "no-store" });
     if (res.status === 404) {
       setNotFound(true);
       return;
     }
-    if (res.ok) setB(await res.json());
+    if (!res.ok) return;
+    const data: BookingStatusResponse = await res.json();
+    const prev = prevRef.current;
+    if (prev) {
+      if (data.status === "called" && (prev.status !== "called" || data.callCount > prev.callCount)) {
+        playCalled();
+      } else if (prev.status === "pending_verify" && data.status === "waiting") {
+        playSuccess();
+      } else if (
+        data.status === "waiting" &&
+        data.position != null &&
+        data.position <= 2 &&
+        (prev.position == null || prev.position > 2)
+      ) {
+        playNear();
+      }
+    }
+    prevRef.current = { status: data.status, callCount: data.callCount, position: data.position };
+    setB(data);
   }, [token]);
 
   useQueueUpdates(load, 5000);
@@ -88,6 +110,12 @@ export default function BookingStatusPage() {
         <div className="glass rounded-3xl p-4">
           <Steps labels={steps.labels} current={steps.current} />
         </div>
+
+        {["pending_payment", "pending_verify", "waiting", "called"].includes(b.status) && (
+          <div className="flex justify-center">
+            <SoundToggle />
+          </div>
+        )}
 
         {b.status === "pending_payment" && (
           <section className="glass-strong flex flex-col items-center gap-4 rounded-3xl p-6">
@@ -153,6 +181,11 @@ export default function BookingStatusPage() {
             <div className={`text-8xl font-extrabold tracking-[0.06em] ${called ? "text-white" : "text-neutral-900"}`}>
               {b.queueLabel}
             </div>
+            {b.status === "waiting" && b.position != null && b.position <= 2 && (
+              <p className="rounded-2xl bg-red-50 px-4 py-2 text-sm font-semibold text-red-600">
+                🔔 เตรียมตัว — ใกล้ถึงคิวคุณแล้ว
+              </p>
+            )}
             {b.status === "waiting" && (
               <div className="mt-2 flex gap-6 text-center font-light text-neutral-500">
                 <p>คิวก่อนหน้า <b className="font-semibold text-neutral-900">{b.position ?? "-"}</b> คิว</p>

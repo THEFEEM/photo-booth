@@ -1,7 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Logo } from "@/components/logo";
+import { SoundToggle } from "@/components/sound-toggle";
+import { announceQueue } from "@/lib/sound";
 import { useQueueUpdates } from "@/lib/use-queue-updates";
 import type { QueueState } from "@/lib/types";
 
@@ -17,9 +19,18 @@ export default function QrDisplayPage() {
       .catch(() => {});
   }, []);
 
+  const prevCallRef = useRef<{ label: string | null; seq: number }>({ label: null, seq: 0 });
+
   const load = useCallback(async () => {
     const res = await fetch("/api/queue", { cache: "no-store" });
-    if (res.ok) setQ(await res.json());
+    if (!res.ok) return;
+    const data: QueueState = await res.json();
+    const prev = prevCallRef.current;
+    if (data.called && (data.called !== prev.label || data.callSeq > prev.seq)) {
+      announceQueue(data.called);
+    }
+    prevCallRef.current = { label: data.called, seq: data.called ? data.callSeq : 0 };
+    setQ(data);
   }, []);
 
   useQueueUpdates(load, 4000);
@@ -30,6 +41,7 @@ export default function QrDisplayPage() {
         <header className="flex flex-col items-center gap-2 text-center">
           <Logo imgClass="h-14 w-auto rounded-2xl md:h-20" textClass="text-2xl text-neutral-900" />
           <p className="text-sm font-light uppercase tracking-[0.5em] text-neutral-400 md:text-lg">Photo Booth</p>
+          <SoundToggle />
         </header>
 
         <section className="mt-6 grid flex-1 gap-4 md:mt-8 md:gap-6 lg:grid-cols-5">
