@@ -106,7 +106,7 @@ export default function StaffPage() {
 
   return (
     <main className="bg-ahlan min-h-screen">
-      <div className="mx-auto max-w-2xl px-4 pb-10 pt-6">
+      <div className="mx-auto max-w-2xl px-4 pb-10 pt-6 lg:max-w-5xl">
         <header className="mb-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Logo imgClass="h-10 w-auto" textClass="text-base" />
@@ -122,7 +122,7 @@ export default function StaffPage() {
           <p className="mb-3 rounded-xl border border-red-900 bg-red-950/60 px-3 py-2.5 text-sm text-red-300">{actionError}</p>
         )}
 
-        <section className="flex flex-col gap-3">
+        <section className="grid items-start gap-3 lg:grid-cols-2">
           {data.active.length === 0 && (
             <p className="py-10 text-center font-light text-zinc-600">ยังไม่มีคิววันนี้</p>
           )}

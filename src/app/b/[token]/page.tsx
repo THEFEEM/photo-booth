@@ -58,7 +58,8 @@ export default function BookingStatusPage() {
   const called = b.status === "called";
 
   return (
-    <main className={`${called ? "bg-cream-called" : "bg-cream"} mx-auto flex min-h-screen max-w-md flex-col gap-6 px-5 pb-10 pt-10 text-stone-800`}>
+    <main className={`${called ? "bg-cream-called" : "bg-cream"} min-h-screen w-full text-stone-800`}>
+      <div className="mx-auto flex min-h-screen w-full max-w-md flex-col gap-6 px-5 pb-10 pt-10 sm:max-w-lg lg:pt-14">
       <header className="flex flex-col items-center gap-2 text-center">
         <Logo imgClass="h-12 w-auto rounded-xl" textClass="text-xl text-stone-900" />
         <p className="text-sm font-light text-stone-500">
@@ -151,6 +152,7 @@ export default function BookingStatusPage() {
       <p className="mt-auto text-center text-[11px] font-light uppercase tracking-[0.3em] text-stone-400">
         หน้านี้อัปเดตอัตโนมัติ · เก็บลิงก์ไว้เช็คคิว
       </p>
+      </div>
     </main>
   );
 }

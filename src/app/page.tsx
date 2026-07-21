@@ -45,7 +45,8 @@ export default function BookingPage() {
   const cardOn = "border-rose-300 bg-rose-50 shadow-[0_6px_20px_-8px_rgba(244,114,142,0.45)]";
 
   return (
-    <main className="bg-cream mx-auto flex min-h-screen max-w-md flex-col px-5 pb-10 pt-10 text-stone-800">
+    <main className="bg-cream min-h-screen w-full text-stone-800">
+      <div className="mx-auto flex min-h-screen w-full max-w-md flex-col px-5 pb-10 pt-10 sm:max-w-lg lg:pt-14">
       <header className="mb-8 flex flex-col items-center gap-3 text-center">
         <Logo imgClass="h-16 w-auto rounded-2xl" textClass="text-2xl text-stone-900" />
         <div>
@@ -149,6 +150,7 @@ export default function BookingPage() {
       <p className="mt-8 text-center text-[11px] font-light uppercase tracking-[0.3em] text-stone-400">
         AHLAN GROUP · Photo Booth
       </p>
+    </div>
     </main>
   );
 }

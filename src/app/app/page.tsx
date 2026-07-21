@@ -98,12 +98,12 @@ export default function AppHubPage() {
 
   return (
     <main className="bg-ahlan flex min-h-screen flex-col items-center px-6 py-12">
-      <div className="flex w-full max-w-md flex-col gap-8">
+      <div className="flex w-full max-w-md flex-col gap-8 md:max-w-2xl">
         <header className="flex flex-col items-center gap-2 text-center">
           <Logo imgClass="h-16 w-auto rounded-2xl" textClass="text-xl" />
           <p className="text-xs font-light uppercase tracking-[0.5em] text-zinc-500">เลือกหน้าที่ต้องการเปิด</p>
         </header>
-        <nav className="flex flex-col gap-3">
+        <nav className="grid gap-3 md:grid-cols-2">
           {menus.map((m) => (
             <Link
               key={m.href}
